@@ -1,0 +1,14 @@
+{
+  "name": "Janky",
+  "version": "1.0",
+  "description": "Jenkins UI tweaks",
+  "background_page": "background.html",
+  "browser_action": {
+    "default_icon": "icons/jenkins.png"
+  },
+  "content_scripts": [{
+    "matches": ["http://*/*"],
+    // "css": ["css/janky.css"],
+    "js": ["javascripts/jquery-1.6.4.min.js", "javascripts/init.js"]
+  }]
+}

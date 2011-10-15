@@ -1,0 +1,13 @@
+#janky_wrap{
+  background-color: #FFFFFF;
+  bottom: 0;
+  display: none;
+  position: fixed;
+  width: 100%;
+  z-index: 100000;
+}
+
+#janky_wrap #janky_drawer_toggle{
+  cursor: pointer;
+  height: 30px;
+}
