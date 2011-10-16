@@ -1,5 +1,4 @@
-#janky_wrap{
-  background-color: #FFFFFF;
+#janky_fixed{
   bottom: 0;
   display: none;
   position: fixed;
@@ -7,7 +6,25 @@
   z-index: 100000;
 }
 
-#janky_wrap #janky_drawer_toggle{
+#janky_wrap{
+  background-color: #FFFFFF;
+  box-shadow: 0 0 2px 2px rgba(0,0,0,0.5);
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  margin: 0 20px;
+  padding: 10px;
+}
+
+#janky_fixed #janky_drawer_toggle{
+  box-shadow: 0 0 2px 2px rgba(0,0,0,0.5);
   cursor: pointer;
-  height: 30px;
+  height: 20px;
+  width: 100px;
+  margin: 0 auto;
+  background-color: #FFFFFF;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  padding: 5px;
+  text-align: center;
+  line-height: 20px;
 }
