@@ -12,6 +12,7 @@
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;
   margin: 0 20px;
+  overflow-y: auto;
   padding: 10px;
 }
 
@@ -27,4 +28,61 @@
   padding: 5px;
   text-align: center;
   line-height: 20px;
+}
+
+#janky_content{
+  margin-bottom: 60px;
+  text-align: center;
+}
+
+#janky_content > div{
+  clear: both;
+}
+
+#janky_content h1, #janky_content h2{
+  margin: 0px;
+  text-align: left;
+}
+
+#janky_content .janky_job{
+  border-radius: 5px;
+  display: inline-block;
+  margin: 10px;
+  padding: 10px;
+  width: 29%;
+}
+
+#janky_content #janky_reds .janky_job{
+  background-color: red;
+}
+
+#janky_content #janky_reds h1{
+  color: red;
+  font-size: 4em;
+}
+
+#janky_content #janky_reds h2{
+  font-size: 3em;
+}
+
+#janky_content #janky_pending h1{
+  color: #8e8e8e;
+  font-size: 3em;
+}
+
+#janky_content #janky_pending h2{
+  font-size: 2.5em;
+}
+
+#janky_content #janky_pending .janky_job{
+  background-color: grey;
+}
+
+#janky_content #janky_greens h1{
+  color: green;
+  font-size: 2em;
+}
+
+#janky_content #janky_greens .janky_job{
+  background-color: green;
 }

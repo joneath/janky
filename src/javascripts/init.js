@@ -6,6 +6,7 @@ var JANKY_INCLUDES = {
     chrome.extension.getURL("javascripts/jquery-1.6.4.min.js"),
     chrome.extension.getURL("javascripts/jquery.jfeed.pack.js"),
     chrome.extension.getURL("javascripts/underscore-min.js"),
+    chrome.extension.getURL("javascripts/iso8601.min.js"),
     chrome.extension.getURL("javascripts/janky.js")
   ],
   templates: [
