@@ -7,16 +7,21 @@
 }
 
 #janky_wrap{
-  background-color: #FFFFFF;
+  background: url('http://cdn.portrit.com/black_linen_v2.png') top left repeat;
   box-shadow: 0 0 2px 2px rgba(0,0,0,0.5);
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;
-  margin: 0 20px;
+  margin: 0 auto;
   overflow-y: auto;
   padding: 10px;
 }
 
+#janky_wrap h3 .strong{
+  font-size: 1.35em;
+}
+
 #janky_fixed #janky_drawer_toggle{
+  background: url('https://s3.amazonaws.com/joneath/black_denim.png') top left repeat;
   box-shadow: 0 0 2px 2px rgba(0,0,0,0.5);
   cursor: pointer;
   height: 20px;
@@ -28,9 +33,13 @@
   padding: 5px;
   text-align: center;
   line-height: 20px;
+  color: white;
+  font-weight: bold;
+  font-size: 16px;
 }
 
 #janky_content{
+  color: #fefefe;
   margin-bottom: 60px;
   text-align: center;
 }
@@ -46,23 +55,34 @@
 
 #janky_content .janky_job{
   border-radius: 5px;
-  display: inline-block;
+  float: left;
   margin: 10px;
   padding: 10px;
   width: 29%;
+  -webkit-transition: all 2s ease-in;
+  box-shadow: 0 0 2px 3px rgba(0,0,0,0.5);
 }
 
 #janky_content #janky_reds .janky_job{
-  background-color: red;
+  height: 150px;
+}
+
+#janky_content #janky_reds .janky_job.on{
+  background-color: #ff0000;
+}
+
+#janky_content #janky_reds .janky_job.off{
+  background-color: #7d0000;
 }
 
 #janky_content #janky_reds h1{
   color: red;
   font-size: 4em;
+  text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
 }
 
 #janky_content #janky_reds h2{
-  font-size: 3em;
+  font-size: 2.5em;
 }
 
 #janky_content #janky_pending h1{
@@ -72,6 +92,7 @@
 
 #janky_content #janky_pending h2{
   font-size: 2.5em;
+  text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
 }
 
 #janky_content #janky_pending .janky_job{
@@ -79,10 +100,76 @@
 }
 
 #janky_content #janky_greens h1{
-  color: green;
+  color: #467530;
   font-size: 2em;
+  text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
 }
 
 #janky_content #janky_greens .janky_job{
-  background-color: green;
+  background-color: #467530;
 }
+
+#janky_settings_toggle{
+  background: url('https://s3.amazonaws.com/joneath/settings.png') top left repeat;
+  cursor: pointer;
+  height: 26px;
+  width: 26px;
+  position: absolute;
+  right: 10px;
+}
+
+#janky_settings{
+  box-shadow: 0 0 4px 5px rgba(0,0,0,0.5);
+  border-radius: 5px;
+  border: 2px solid #DEDEDE;
+  display: none;
+  position: absolute;
+  right: 45px;
+  height: 250px;
+  background-color: #222222;
+  width: 300px;
+  top: 40px;
+}
+
+  #janky_settings ul{
+    list-style: none;
+    margin: 0px;
+    padding: 0px;
+  }
+
+    #janky_settings ul li{
+      clear: both;
+      margin: 5px;
+    }
+
+    #janky_settings li h4{
+      color: #fefefe;
+      float: left;
+      font-size: 16px;
+      line-height: 50px;
+      margin: 0px;
+      margin-left: 5px;
+    }
+
+    #janky_settings .switch{
+      position:           relative;
+      cursor:             pointer;
+      float:              right;
+      margin-top:         4px;
+    }
+
+    .switch_on{
+      cursor:             pointer;
+      height:             43px;
+      width:              117px;
+      background-image:   url(http://portrit.s3.amazonaws.com/img/sprite.png);
+      background-position: -238px -700px;
+    }
+
+    .switch_off{
+      cursor:             pointer;
+      height:             43px;
+      width:              117px;
+      background-image:   url(http://portrit.s3.amazonaws.com/img/sprite.png);
+      background-position: -369px -700px;
+    }
