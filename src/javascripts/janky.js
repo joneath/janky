@@ -83,7 +83,7 @@ var date_sort_asc = function (obj1, obj2) {
 
   m_.janky_default_settings = {
     startup_shown: false,
-    update_delay: 5
+    update_delay: 30
   };
 
   m_.jenkins_state_map = {
