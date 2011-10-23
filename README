@@ -1,0 +1,6 @@
+Janky
+-----
+
+Janky is a simple Jenkins CI monitor chrome extension. It takes the brutally outdated UI and simplifies it for use as a radiator. Extraneous data is cut, fonts are large, and it really lets you know when something is broken. 
+
+Janky is a complete weekend hack, so the code it quite spaghettified. Feel free to modify it in any way you please. 
