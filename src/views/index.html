@@ -3,13 +3,13 @@
   <div id="janky_content">
     <div id="janky_settings_toggle"></div>
     <div id="janky_reds">
-      <h1>Reds</h2>
+      <h1>Broken</h2>
     </div>
     <div id="janky_pending">
-      <h1>Pending</h2>
+      <h1>Building</h2>
     </div>
     <div id="janky_greens">
-      <h1>Greens</h2>
+      <h1>Stable</h2>
     </div>
   </div>
   <div id="janky_settings">
@@ -17,6 +17,11 @@
       <li>
         <h4>Start Expanded</h4>
         <div id="startup_shown" class="switch"></div>
+      </li>
+      <li>
+        <h4>Refresh</h4>
+        <span id="janky_refresh_slider_range">5s</span>
+        <input id="janky_refresh_slider"type="range" min="0" max="90" value="5" step="5"/>
       </li>
     </ul>
   </div>

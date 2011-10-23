@@ -35,6 +35,30 @@ function secondsToHms(d) {
   }
 }
 
+var date_sort_desc = function (obj1, obj2) {
+  // This is a comparison function that will result in dates being sorted in
+  // DESCENDING order.
+
+  var date1 = new Date(Date.parse(obj1.last_success));
+  var date2 = new Date(Date.parse(obj2.last_success));
+
+  if (date1 > date2) return -1;
+  if (date1 < date2) return 1;
+  return 0;
+};
+
+var date_sort_asc = function (obj1, obj2) {
+  // This is a comparison function that will result in dates being sorted in
+  // ASCENDING order. As you can see, JavaScript's native comparison operators
+  // can be used to compare dates. This was news to me.
+  var date1 = new Date(Date.parse(obj1.last_success));
+  var date2 = new Date(Date.parse(obj2.last_success));
+
+  if (date1 > date2) return 1;
+  if (date1 < date2) return -1;
+  return 0;
+};
+
 (function(){
   var self = { };
   var m_ = { };
@@ -53,17 +77,19 @@ function secondsToHms(d) {
   m_.janky_settings_cont = null;
   m_.janky_settings_data = { };
   m_.jenkins_builds_cont = null;
-  m_.janky_build_interval = null;
+  m_.update_interval = null;
   m_.janky_build_map = { };
   m_.jenkins_data = { };
 
   m_.janky_default_settings = {
-    startup_shown: false
+    startup_shown: false,
+    update_delay: 5
   };
 
   m_.jenkins_state_map = {
     '0': 'broken',
     '4': 'stable',
+    '5': 'In progress',
     '8': 'disabled'
   };
 
@@ -75,6 +101,7 @@ function secondsToHms(d) {
     m_.jenkins_builds_cont = $('#executors');
     m_.janky_settings_cont = $('#janky_settings');
     m_.janky_settings_toggle = $('#janky_settings_toggle');
+    m_.root = $('body');
 
     m_.update_janky_sizes();
 
@@ -93,17 +120,14 @@ function secondsToHms(d) {
 
     $('div.switch').bind('click', m_.setting_changed);
 
+    $('#janky_refresh_slider').bind('change', m_.slider_update);
+
     m_.get_jenkins_feed();
     m_.janky_fixed.show();
 
     // Ghetto timeout for async template load
     setTimeout(m_.render_janky_feed, 100);
-
-    // Poll builds container for new builds
-    clearInterval(m_.janky_build_interval);
-    m_.janky_build_interval = setInterval(function(){
-      m_.build_change();
-    }, 500);
+    setTimeout(m_.build_change, 100);
 
     m_.janky_pulsate_broken();
   };
@@ -121,11 +145,39 @@ function secondsToHms(d) {
   };
 
   self.update_janky_feed = function(){
-    m_.jenkins_data = { };
-    m_.get_jenkins_feed();
+    // m_.jenkins_data = { };
+
+    $.get(window.location.href, function(data){
+      m_.root = $(data);
+      m_.get_jenkins_feed();
+
+      $('div#janky_content div.janky_job').remove();
+      // Ghetto timeout for async template load
+      setTimeout(m_.render_janky_feed, 100);
+      setTimeout(m_.build_change, 100);
+    });
   };
 
   // Private Methods
+
+  m_.slider_update = function(e){
+    var value = $(this).val();
+    $('#janky_refresh_slider_range').text(value + 's');
+    if (parseInt(value) > 0){
+      m_.update_frequency(value);
+    }
+    else{
+      clearInterval(m_.update_interval);
+    }
+    m_.janky_settings_data["update_delay"] = value;
+    m_.save_settings();
+  };
+
+  m_.update_frequency = function(delay){
+    delay = parseInt(delay) * 1000;
+    clearInterval(m_.update_interval);
+    m_.update_interval = setInterval(self.update_janky_feed, delay);
+  };
 
   m_.setting_changed = function(){
     var key = $(this).attr('id');
@@ -146,7 +198,6 @@ function secondsToHms(d) {
     m_.janky_settings_data = localStorage.getItem('janky_settings');
     if (m_.janky_settings_data){
       m_.janky_settings_data = JSON.parse(m_.janky_settings_data);
-      console.log(m_.janky_settings_data );
       $.extend(m_.janky_default_settings, m_.janky_settings_data);
     }
     else{
@@ -156,11 +207,24 @@ function secondsToHms(d) {
     var attr = false;
     for (var key in m_.janky_settings_data){
       attr = m_.janky_settings_data[key];
-      if (attr){
-        $('#janky_settings #' + key).addClass('switch_on');
+      if (key == "update_delay"){
+        $('#janky_refresh_slider').attr('value', attr);
+        $('#janky_refresh_slider_range').text(attr + 's');
+        if (parseInt(attr) > 0){
+          console.log('updated refresh to ' + attr);
+          m_.update_frequency(attr);
+        }
+        else{
+          clearInterval(m_.update_interval);
+        }
       }
       else{
-        $('#janky_settings #' + key).addClass('switch_off');
+        if (attr){
+          $('#janky_settings #' + key).addClass('switch_on');
+        }
+        else{
+          $('#janky_settings #' + key).addClass('switch_off');
+        } 
       }
     }
 
@@ -179,45 +243,41 @@ function secondsToHms(d) {
     var toggle = false;
     var color_class = "on";
     setInterval(function(){
-      $('#janky_reds .janky_job').removeClass(color_class);
+      $('#janky_reds .janky_job, #janky_reds > h1').removeClass(color_class);
       color_class = toggle ? "on": "off";
-      $('#janky_reds .janky_job').addClass(color_class);
+      $('#janky_reds .janky_job, #janky_reds > h1').addClass(color_class);
       toggle = !toggle;
     }, 2000);
   };
 
   m_.update_janky_builds = function(build){
-    console.log(build);
+    var janky_job = $('div.janky_job[data-job-title="' + build.title + '"]');
+
+    janky_job.append('<meter value="' + build.progress + '" max="100"></meter>');
   };
 
   m_.build_change = function(e){
-    if ($('#executors').find('table.progress-bar')){
-      var rows = $('#executors > tbody:last > tr');
+    if ($(m_.root).find('#executors table.progress-bar')){
+      var rows = $(m_.root).find('#executors > tbody:last > tr');
       var build = '';
       var progress = 0;
       var progress_cont = null;
+      var running_time = 0;
 
       rows.each(function(i){
         if ($(this).find('table.progress-bar').length > 0){
           build = $(this).find('a:first').text();
           progress = $(this).find('td.progress-bar-done').css('width').replace('px', '');
+          running_time = $(this).find('table.progress-bar').attr('title');
+          console.log('build data');
+          console.log(running_time);
+          console.log(progress);
 
-          if (typeof(m_.janky_build_map[build]) == "undefined"){
-            m_.janky_build_map[build] = {
-              title: build,
-              progress: progress
-            };
-          }
-          else if (m_.janky_build_map[build].progress != progress){
-            m_.janky_build_map[build] = {
-              title: build,
-              progress: progress
-            };
-          }
-          else{
-            // jQuery continue hack
-            return true;
-          }
+          m_.janky_build_map[build] = {
+            title: build,
+            progress: progress,
+            running_time: running_time
+          };
           m_.update_janky_builds(m_.janky_build_map[build]);
         }
       }); 
@@ -231,11 +291,14 @@ function secondsToHms(d) {
     //     m_.parse_jenkins_feed(feed.items);
     //   }
     // });
-    var feed = [ ];
+    var feed = null;
+    var fail_feed = [ ];
+    var success_feed = [ ];
+    var misc_feed = [ ];
     var job = { };
     var that = null;
     var hash_index = 0;
-    $('#projectstatus > tbody:first > tr:gt(0)').each(function(){
+    $(m_.root).find('#projectstatus > tbody:first > tr:gt(0)').each(function(){
       that = this;
       job = { };
 
@@ -249,8 +312,26 @@ function secondsToHms(d) {
       job.last_failure = $('td:eq(7)', that).attr('data');
       job.last_duration = $('td:eq(8)', that).attr('data');
 
-      feed.push(job);
+      if (job.status == '4'){
+        success_feed.push(job);
+      }
+      else if (job.status == '0'){
+        fail_feed.push(job);
+      }
+      else{
+        misc_feed.push(job);
+      }
     });
+
+    success_feed.sort(date_sort_asc);
+    fail_feed.sort(date_sort_asc);
+
+    console.log(success_feed);
+    console.log(fail_feed);
+
+    feed = success_feed.concat(fail_feed);
+    feed = feed.concat(misc_feed);
+
     m_.parse_jenkins_feed(feed);
   };
 
@@ -296,22 +377,23 @@ function secondsToHms(d) {
   };
 
   m_.render_janky_feed = function(){
-    console.log(m_.jenkins_data);
     var state = '';
     var red_cont = $('#janky_content #janky_reds');
     var pending_cont = $('#janky_content #janky_pending');
     var green_cont = $('#janky_content #janky_greens');
-    console.log($('#janky_templates div[data-template-name="job"]').html());
     var job_template = _.template($('#janky_templates div[data-template-name="job"]').html().replace(/&gt;/gi, '>').replace(/&lt;/gi, '<'));
-    console.log(job_template);
     for (var key in m_.jenkins_data){
       state = m_.jenkins_data[key].state;
       if (state == "stable"){
-        console.log(m_.jenkins_data[key]);
         green_cont.append(job_template(m_.jenkins_data[key]));
       }
       else if (state == "broken"){
         red_cont.append(job_template(m_.jenkins_data[key]));
+      }
+      else if (state == "In progress"){
+        pending_cont.append(job_template(m_.jenkins_data[key]));
+        pending_cont.find('h3').text('');
+        pending_cont.show();
       }
     }
   };
@@ -337,6 +419,13 @@ function secondsToHms(d) {
   m_.toggle_janky_drawer = function(e, animated){
     m_.update_janky_sizes();
     var toogle_offest = m_.janky_drawer_shown ? -(m_.window_height): -60;
+
+    if (m_.janky_drawer_shown){
+      $('#janky_drawer_toggle').text('Show');
+    }
+    else{
+      $('#janky_drawer_toggle').text('Hide');
+    }
 
     if (typeof(animated) != 'undefined' && animated === false){
       m_.janky_fixed.css({

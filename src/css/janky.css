@@ -16,7 +16,7 @@
   padding: 10px;
 }
 
-#janky_wrap h3 .strong{
+#janky_wrap h3.strong{
   font-size: 1.35em;
 }
 
@@ -42,6 +42,7 @@
   color: #fefefe;
   margin-bottom: 60px;
   text-align: center;
+  text-shadow: 0px 2px 3px #333;
 }
 
 #janky_content > div{
@@ -56,33 +57,54 @@
 #janky_content .janky_job{
   border-radius: 5px;
   float: left;
+  height: 110px;
   margin: 10px;
+  text-align: left;
   padding: 10px;
   width: 29%;
-  -webkit-transition: all 2s ease-in;
+  -webkit-transition: background-color 2s ease-in;
   box-shadow: 0 0 2px 3px rgba(0,0,0,0.5);
+  position: relative;
 }
 
-#janky_content #janky_reds .janky_job{
-  height: 150px;
+#janky_content .janky_job meter{
+  width: 100%;
+  height: 35px;
 }
 
-#janky_content #janky_reds .janky_job.on{
+#janky_content #janky_reds > div{
   background-color: #ff0000;
 }
 
-#janky_content #janky_reds .janky_job.off{
-  background-color: #7d0000;
+.janky_job.on{
+  background-color: #ff0000 !important;
+}
+
+.janky_job.off{
+  background-color: #7d0000 !important;
 }
 
 #janky_content #janky_reds h1{
-  color: red;
+  color: #ff0000;
   font-size: 4em;
   text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
+  -webkit-transition: color 2s ease-in;
+}
+
+#janky_content #janky_reds h1.on{
+  color: #ff0000;
+}
+
+#janky_content #janky_reds h1.off{
+  color: #7d0000;
 }
 
 #janky_content #janky_reds h2{
   font-size: 2.5em;
+}
+
+#janky_content #janky_pending{
+  display: none;
 }
 
 #janky_content #janky_pending h1{
@@ -100,13 +122,18 @@
 }
 
 #janky_content #janky_greens h1{
-  color: #467530;
+  color: #3aaa19;
   font-size: 2em;
   text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
 }
 
+#janky_content #janky_greens h2{
+  font-size: 2.3em;
+}
+
 #janky_content #janky_greens .janky_job{
-  background-color: #467530;
+  background-color: #3aaa19;
+  height: 100px;
 }
 
 #janky_settings_toggle{
@@ -172,4 +199,18 @@
       width:              117px;
       background-image:   url(http://portrit.s3.amazonaws.com/img/sprite.png);
       background-position: -369px -700px;
+    }
+
+    #janky_settings #janky_refresh_slider{
+      float: right;
+      margin-top: 20px;
+      margin-right: 15px;
+    }
+
+    #janky_settings #janky_refresh_slider_range{
+      color: #fefefe;
+      float: right;
+      font-size: 16px;
+      line-height: 50px;
+      width: 30px;
     }
