@@ -17,7 +17,8 @@
 }
 
 #janky_wrap h3.strong{
-  font-size: 1.35em;
+  font-size: 1.75em;
+  margin: 0px;
 }
 
 #janky_fixed #janky_drawer_toggle{
@@ -76,12 +77,20 @@
   background-color: #ff0000;
 }
 
-.janky_job.on{
+#janky_reds .janky_job.on{
   background-color: #ff0000 !important;
 }
 
-.janky_job.off{
+#janky_reds .janky_job.off{
   background-color: #7d0000 !important;
+}
+
+#janky_pending .janky_job.on{
+  background-color: #959595 !important;
+}
+
+#janky_pending .janky_job.off{
+  background-color: #434343 !important;
 }
 
 #janky_content #janky_reds h1{
@@ -100,7 +109,7 @@
 }
 
 #janky_content #janky_reds h2{
-  font-size: 2.5em;
+  font-size: 3em;
 }
 
 #janky_content #janky_pending{
@@ -109,31 +118,31 @@
 
 #janky_content #janky_pending h1{
   color: #8e8e8e;
-  font-size: 3em;
+  font-size: 4em;
 }
 
 #janky_content #janky_pending h2{
-  font-size: 2.5em;
-  text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
+  font-size: 3em;
 }
 
 #janky_content #janky_pending .janky_job{
-  background-color: grey;
+  background-color: #959595;
 }
 
 #janky_content #janky_greens h1{
   color: #3aaa19;
-  font-size: 2em;
-  text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
+  font-size: 4em;
 }
 
 #janky_content #janky_greens h2{
-  font-size: 2.3em;
+  font-size: 3em;
 }
 
 #janky_content #janky_greens .janky_job{
   background-color: #3aaa19;
-  height: 100px;
+  height: 75px;
+  padding: 0px 10px;
+  padding-bottom: 10px;
 }
 
 #janky_settings_toggle{

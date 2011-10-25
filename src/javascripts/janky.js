@@ -88,9 +88,11 @@ var date_sort_asc = function (obj1, obj2) {
 
   m_.jenkins_state_map = {
     '0': 'broken',
+    '1': 'In progress',
     '4': 'stable',
     '5': 'In progress',
-    '8': 'disabled'
+    '8': 'disabled',
+    '11': 'In progress'
   };
 
   m_.init = function(){
@@ -211,7 +213,6 @@ var date_sort_asc = function (obj1, obj2) {
         $('#janky_refresh_slider').attr('value', attr);
         $('#janky_refresh_slider_range').text(attr + 's');
         if (parseInt(attr) > 0){
-          console.log('updated refresh to ' + attr);
           m_.update_frequency(attr);
         }
         else{
@@ -243,16 +244,15 @@ var date_sort_asc = function (obj1, obj2) {
     var toggle = false;
     var color_class = "on";
     setInterval(function(){
-      $('#janky_reds .janky_job, #janky_reds > h1').removeClass(color_class);
+      $('div.janky_job, #janky_reds > h1').removeClass(color_class);
       color_class = toggle ? "on": "off";
-      $('#janky_reds .janky_job, #janky_reds > h1').addClass(color_class);
+      $('div.janky_job, #janky_reds > h1').addClass(color_class);
       toggle = !toggle;
     }, 2000);
   };
 
   m_.update_janky_builds = function(build){
-    var janky_job = $('div.janky_job[data-job-title="' + build.title + '"]');
-
+    var janky_job = $('div.janky_job[data-job-title="' + build.title.replace(/ /g, '_').replace(/-/g, '_') + '"]');
     janky_job.append('<meter value="' + build.progress + '" max="100"></meter>');
   };
 
@@ -269,9 +269,6 @@ var date_sort_asc = function (obj1, obj2) {
           build = $(this).find('a:first').text();
           progress = $(this).find('td.progress-bar-done').css('width').replace('px', '');
           running_time = $(this).find('table.progress-bar').attr('title');
-          console.log('build data');
-          console.log(running_time);
-          console.log(progress);
 
           m_.janky_build_map[build] = {
             title: build,
@@ -326,9 +323,6 @@ var date_sort_asc = function (obj1, obj2) {
     success_feed.sort(date_sort_asc);
     fail_feed.sort(date_sort_asc);
 
-    console.log(success_feed);
-    console.log(fail_feed);
-
     feed = success_feed.concat(fail_feed);
     feed = feed.concat(misc_feed);
 
@@ -367,7 +361,7 @@ var date_sort_asc = function (obj1, obj2) {
       status = m_.jenkins_state_map[feed[i].status];
       m_.jenkins_data[title] = {
         title: title,
-        job_title: title,
+        job_title: title.replace(/ /g, '_').replace(/-/g, '_'),
         state: status,
         build_time: build_time,
         last_failure: last_failure,
@@ -385,6 +379,7 @@ var date_sort_asc = function (obj1, obj2) {
     for (var key in m_.jenkins_data){
       state = m_.jenkins_data[key].state;
       if (state == "stable"){
+        delete m_.jenkins_data[key].last_success;
         green_cont.append(job_template(m_.jenkins_data[key]));
       }
       else if (state == "broken"){

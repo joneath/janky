@@ -1,4 +1,6 @@
 <div class="janky_job" data-job-title="<%= job_title %>">
   <h2><%= title %></h2>
-  <h3 class="strong"><%= state %> for: <%= last_success %></h3>
+  <% if (typeof(last_success) != "undefined"){ %>
+    <h3 class="strong"><%= state %> for: <%= last_success %></h3>
+  <% } %>
 </div>
