@@ -253,7 +253,9 @@ var date_sort_asc = function (obj1, obj2) {
 
   m_.update_janky_builds = function(build){
     var janky_job = $('div.janky_job[data-job-title="' + build.title.replace(/ /g, '_').replace(/-/g, '_') + '"]');
-    janky_job.append('<meter value="' + build.progress + '" max="100"></meter>');
+    if (build.progress){
+      janky_job.append('<meter value="' + build.progress + '" max="100"></meter>');
+    }
   };
 
   m_.build_change = function(e){
@@ -266,16 +268,29 @@ var date_sort_asc = function (obj1, obj2) {
 
       rows.each(function(i){
         if ($(this).find('table.progress-bar').length > 0){
-          build = $(this).find('a:first').text();
-          progress = $(this).find('td.progress-bar-done').css('width').replace('px', '');
-          running_time = $(this).find('table.progress-bar').attr('title');
+          try{
+            build = $(this).find('a:first').text();
+            progress = $(this).find('td.progress-bar-done').css('width').replace('px', '');
+            running_time = $(this).find('table.progress-bar').attr('title');
 
-          m_.janky_build_map[build] = {
-            title: build,
-            progress: progress,
-            running_time: running_time
-          };
-          m_.update_janky_builds(m_.janky_build_map[build]);
+            m_.janky_build_map[build] = {
+              title: build,
+              progress: progress,
+              running_time: running_time
+            };
+            m_.update_janky_builds(m_.janky_build_map[build]); 
+          }
+          catch (e){
+            build = $(this).find('a:first').text();
+            running_time = $(this).find('table.progress-bar').attr('title');
+
+            m_.janky_build_map[build] = {
+              title: build,
+              progress: null,
+              running_time: running_time
+            };
+            m_.update_janky_builds(m_.janky_build_map[build]); 
+          }
         }
       }); 
     }
