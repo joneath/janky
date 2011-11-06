@@ -63,7 +63,7 @@
   text-align: left;
   padding: 10px;
   width: 29%;
-  -webkit-transition: background-color 2s ease-in;
+  /*-webkit-transition: background-color 2s ease-in;*/
   box-shadow: 0 0 2px 3px rgba(0,0,0,0.5);
   position: relative;
 }
@@ -97,7 +97,7 @@
   color: #ff0000;
   font-size: 4em;
   text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
-  -webkit-transition: color 2s ease-in;
+  /*-webkit-transition: color 2s ease-in;*/
 }
 
 #janky_content #janky_reds h1.on{
@@ -223,3 +223,51 @@
       line-height: 50px;
       width: 30px;
     }
+
+.janky_job_settings_toggle{
+  background: url('https://s3.amazonaws.com/joneath/settings.png') top left repeat;
+  cursor: pointer;
+  display: none;
+  height: 26px;
+  width: 26px;
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}
+
+#janky_job_settings{
+  display: none;
+  width: 550px;
+  height: 100px;
+  font-size: 20px;
+  background-color: #333;
+  box-shadow: 0 0 2px 3px rgba(0,0,0,0.5);
+  position: fixed;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+  #janky_job_settings input{
+    width: 100%;
+    margin-top: 5px;
+    font-size: 24px;
+    padding: 10px;
+  }
+
+.janky_close{
+  background: url('https://s3.amazonaws.com/portrit/img/x.png');
+  cursor: pointer;
+  height: 25px;
+  width: 25px;
+  position: absolute;
+  top: -10px;
+  right: -10px;
+}
+
+#janky_build_broke_cont{
+  display: none;
+  position: fixed;
+  height: 500px;
+  width: 900px;
+  padding: 10px;
+}

@@ -80,6 +80,7 @@ var date_sort_asc = function (obj1, obj2) {
   m_.update_interval = null;
   m_.janky_build_map = { };
   m_.jenkins_data = { };
+  m_.janky_job_youtube_data = { };
 
   m_.janky_default_settings = {
     startup_shown: false,
@@ -123,6 +124,37 @@ var date_sort_asc = function (obj1, obj2) {
     $('div.switch').bind('click', m_.setting_changed);
 
     $('#janky_refresh_slider').bind('change', m_.slider_update);
+
+    $('div.janky_job').live({
+      mouseenter:
+        function(){
+          $('div.janky_job_settings_toggle', this).show();
+        },
+      mouseleave:
+        function(){
+          $('div.janky_job_settings_toggle', this).hide();
+        }
+      }
+    );
+
+    $('div.janky_job_settings_toggle').live('click', m_.toggle_job_settings);
+
+    $('#janky_job_settings > input').bind('focus', function(){
+      if (this.value == this.defaultValue){
+        this.value = '';
+      }  
+      if(this.value != this.defaultValue){  
+        this.select();  
+      }
+    });
+    
+    $('#janky_job_settings > input').bind('blur', function(){
+      if ($.trim(this.value) == ''){
+        this.value = (this.defaultValue ? this.defaultValue : '');  
+      }
+    });
+
+    $('#janky_job_settings div.janky_close').live('click', m_.close_job_settings);
 
     m_.get_jenkins_feed();
     m_.janky_fixed.show();
@@ -219,13 +251,16 @@ var date_sort_asc = function (obj1, obj2) {
           clearInterval(m_.update_interval);
         }
       }
+      else if (key == "youtube"){
+        m_.janky_job_youtube_data = m_.janky_settings_data[key];
+      }
       else{
         if (attr){
           $('#janky_settings #' + key).addClass('switch_on');
         }
         else{
           $('#janky_settings #' + key).addClass('switch_off');
-        } 
+        }
       }
     }
 
@@ -240,6 +275,41 @@ var date_sort_asc = function (obj1, obj2) {
     localStorage.setItem('janky_settings', json);
   };
 
+  m_.toggle_job_settings = function(){
+    var parent = $(this).parent();
+    var left_offset = ($(window).width() / 2) - ($('#janky_job_settings').outerWidth() / 2);
+    var top_offset = ($(window).height() / 2) - ($('#janky_job_settings').outerHeight() / 2);
+    $('#janky_job_settings').css({
+      'left': left_offset,
+      'top': top_offset
+    });
+
+    var job_title = $(parent).attr('data-job-title');
+    $('#janky_job_settings > h2').text(job_title);
+
+    if (typeof(m_.janky_job_youtube_data[job_title]) != 'undefined'){
+      $('#janky_job_settings > input').val(m_.janky_job_youtube_data[job_title]);
+    }
+
+    $('#janky_job_settings').fadeIn();
+  };
+
+  m_.close_job_settings = function(){
+    var parent = $(this).parent();
+    parent.fadeOut();
+
+    var youtube_link = parent.find('input').val();
+    var job_title = parent.find('h2').text();
+
+    if (youtube_link != "YouTube ID" && youtube_link !== ""){
+       m_.janky_job_youtube_data[job_title] = youtube_link;
+    }
+    m_.janky_settings_data["youtube"] = m_.janky_job_youtube_data;
+    m_.save_settings();
+
+    m_.play_job_youtube_vid(job_title);
+  };
+
   m_.janky_pulsate_broken = function(){
     var toggle = false;
     var color_class = "on";
@@ -249,6 +319,22 @@ var date_sort_asc = function (obj1, obj2) {
       $('div.janky_job, #janky_reds > h1').addClass(color_class);
       toggle = !toggle;
     }, 2000);
+  };
+
+  m_.check_broken_time = function(job){
+    
+  };
+
+  m_.play_job_youtube_vid = function(job){
+    var url = m_.janky_job_youtube_data[job];
+    $('#janky_build_broke_cont').html('<iframe width="853" height="480" src="http://www.youtube.com/embed/' + url + '?rel=0&autoplay=1" frameborder="0" allowfullscreen></iframe>');
+    
+    $('#janky_build_broke_cont').css({
+      top: ($(window).height() / 2) - ($('#janky_build_broke_cont').height() / 2),
+      left: ($(window).width() / 2) - ($('#janky_build_broke_cont').width() / 2)
+    });
+
+    $('#janky_build_broke_cont').show();
   };
 
   m_.update_janky_builds = function(build){
@@ -384,6 +470,8 @@ var date_sort_asc = function (obj1, obj2) {
       }
       else if (state == "broken"){
         red_cont.append(job_template(m_.jenkins_data[key]));
+
+        m_.check_broken_time(m_.jenkins_data[key]);
       }
       else if (state == "In progress"){
         pending_cont.append(job_template(m_.jenkins_data[key]));
