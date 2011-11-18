@@ -78,12 +78,14 @@ var date_sort_asc = function (obj1, obj2) {
   m_.janky_settings_data = { };
   m_.jenkins_builds_cont = null;
   m_.update_interval = null;
+  m_.janky_tabs = [ ];
   m_.janky_build_map = { };
   m_.jenkins_data = { };
 
   m_.janky_default_settings = {
     startup_shown: false,
-    update_delay: 30
+    update_delay: 30,
+    color_transition: false
   };
 
   m_.jenkins_state_map = {
@@ -112,6 +114,8 @@ var date_sort_asc = function (obj1, obj2) {
     });
 
     m_.load_settings();
+
+    m_.load_job_tabs();
 
     // Attach drawer toggle
     m_.janky_drawer_toggle.bind('click', m_.toggle_janky_drawer);
@@ -147,8 +151,6 @@ var date_sort_asc = function (obj1, obj2) {
   };
 
   self.update_janky_feed = function(){
-    // m_.jenkins_data = { };
-
     $.get(window.location.href, function(data){
       m_.root = $(data);
       m_.get_jenkins_feed();
@@ -161,6 +163,15 @@ var date_sort_asc = function (obj1, obj2) {
   };
 
   // Private Methods
+
+  m_.load_job_tabs = function(){
+    $('.dashboard .inactive').each(function(){
+      m_.janky_tabs.push({
+        title: $(this).find('a').text(),
+        link: $(this).find('a').attr('href')
+      });
+    });
+  };
 
   m_.slider_update = function(e){
     var value = $(this).val();
@@ -184,6 +195,7 @@ var date_sort_asc = function (obj1, obj2) {
   m_.setting_changed = function(){
     var key = $(this).attr('id');
     var value = false;
+
     if ($(this).hasClass('switch_on')){
       $(this).removeClass('switch_on').addClass('switch_off');
     }
@@ -225,7 +237,20 @@ var date_sort_asc = function (obj1, obj2) {
         }
         else{
           $('#janky_settings #' + key).addClass('switch_off');
-        } 
+        }
+
+        if (key == "color_transition"){
+          if (attr){
+            $('div.janky_job').css({
+              '-webkit-transition': 'background-color 2s ease-in'
+            });
+          }
+          else{
+            $('div.janky_job').css({
+              '-webkit-transition': 'none'
+            });
+          }
+        }
       }
     }
 
@@ -238,6 +263,8 @@ var date_sort_asc = function (obj1, obj2) {
   m_.save_settings = function(){
     var json = JSON.stringify(m_.janky_settings_data);
     localStorage.setItem('janky_settings', json);
+
+    m_.load_settings();
   };
 
   m_.janky_pulsate_broken = function(){
@@ -297,12 +324,6 @@ var date_sort_asc = function (obj1, obj2) {
   };
 
   m_.get_jenkins_feed = function(){
-    // jQuery.getFeed({
-    //   url: '/rssAll',
-    //   success: function(feed){
-    //     m_.parse_jenkins_feed(feed.items);
-    //   }
-    // });
     var feed = null;
     var fail_feed = [ ];
     var success_feed = [ ];
@@ -406,6 +427,21 @@ var date_sort_asc = function (obj1, obj2) {
         pending_cont.show();
       }
     }
+
+    m_.set_color_toggle();
+  };
+
+  m_.set_color_toggle = function(){
+    if (m_.janky_settings_data["color_transition"]){
+      $('div.janky_job').css({
+        '-webkit-transition': 'background-color 2s ease-in'
+      });
+    }
+    else{
+      $('div.janky_job').css({
+        '-webkit-transition': 'none'
+      });
+    }
   };
 
   m_.window_resize = function(){
@@ -447,7 +483,6 @@ var date_sort_asc = function (obj1, obj2) {
         bottom: toogle_offest
       }, 300);
     }
-
     m_.janky_drawer_shown = !m_.janky_drawer_shown;
   };
 
